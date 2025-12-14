@@ -5,6 +5,7 @@ import attendance.model.AttInfo
 import attendance.model.Attendance
 import attendance.view.InputView
 import attendance.view.OutputView
+import attendance.view.output.CheckCrewAttView
 import attendance.view.output.EditView
 import camp.nextstep.edu.missionutils.DateTimes
 import java.time.LocalDate
@@ -28,11 +29,15 @@ class AttController {
                     attEdit()
                 }
 
-                "3" -> {}
+                "3" -> {
+                    checkCrewAtt()
+                }
+
                 "4" -> {}
                 "Q" -> {
                     break
                 }
+
                 else -> {
                     throw IllegalArgumentException(ErrorMessages.ILLEGAL_ARGUMENT)
                 }
@@ -53,7 +58,10 @@ class AttController {
 
         val newAttend = AttInfo(
             nickName = nickName,
-            dateTime = dateTime
+            dateTime = dateTime,
+            status = Attendance.statusJudge(
+                dateTime
+            )
         )
         Attendance.attendanceStatuses.add(
             newAttend
@@ -61,10 +69,8 @@ class AttController {
 
         OutputView.showSingleStatus(
             attInfo = newAttend,
-            attStatus = Attendance.statusJudge(
-                attInfo = newAttend
+
             )
-        )
     }
 
     fun attEdit() {
@@ -90,17 +96,32 @@ class AttController {
 
         val newAttend = AttInfo(
             nickName = nickName,
-            dateTime = dateTime
+            dateTime = dateTime, status = Attendance.statusJudge(dateTime),
         )
         EditView.showEditedStatus(
             prevAttInfo = targetInfo!!,
-            prevAttStatus = Attendance.statusJudge(targetInfo),
             newAttInfo = newAttend,
-            newAttStatus = Attendance.statusJudge(newAttend)
         )
 
         Attendance.attendanceStatuses.remove(targetInfo)
         Attendance.attendanceStatuses.add(newAttend)
+    }
+
+    fun checkCrewAtt() {
+        OutputView.showNickNameInputGuide()
+        val nickName = InputView.readLine()
+
+        var targetInfos =
+            Attendance.attendanceStatuses.filter { it.nickName == nickName }.toMutableList()
+
+        targetInfos = Attendance.fillEmptyDate(crewAttInfos = targetInfos)
+
+        targetInfos = targetInfos.sortedBy { it.dateTime }.toMutableList()
+        CheckCrewAttView.showCrewAtt(
+            name = nickName,
+            attInfoList = targetInfos
+        )
+
 
     }
 }

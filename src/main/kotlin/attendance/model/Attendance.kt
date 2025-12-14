@@ -1,7 +1,9 @@
 package attendance.model
 
+import camp.nextstep.edu.missionutils.DateTimes
 import java.io.File
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -52,5 +54,33 @@ object Attendance {
             }
         }
         return AttStatus.ATTEND
+    }
+
+    fun fillEmptyDate(crewAttInfos: List<AttInfo>): MutableList<AttInfo> {
+        val now = DateTimes.now()
+        val nowDate = now.toLocalDate().dayOfMonth
+
+        val crewAttInfosWithAbsent = mutableListOf<AttInfo>()
+
+        crewAttInfosWithAbsent.addAll(crewAttInfos)
+        for (day: Int in 1..nowDate) {
+            val date = LocalDate.of(now.year, now.month, day)
+            if (date.dayOfMonth == 25) {
+                continue
+            }
+            if (date.dayOfWeek == DayOfWeek.SATURDAY || date.dayOfWeek == DayOfWeek.SUNDAY) {
+                continue
+            }
+
+            crewAttInfosWithAbsent.add(
+                AttInfo(
+                    nickName = crewAttInfos.first().nickName,
+                    dateTime = LocalDateTime.of(date, LocalTime.of(0, 0)),
+                    status = AttStatus.ABSENCE
+                )
+            )
+        }
+
+        return crewAttInfosWithAbsent
     }
 }
