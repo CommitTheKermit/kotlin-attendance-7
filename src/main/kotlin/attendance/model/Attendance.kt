@@ -65,6 +65,9 @@ object Attendance {
         crewAttInfosWithAbsent.addAll(crewAttInfos)
         for (day: Int in 1..nowDate) {
             val date = LocalDate.of(now.year, now.month, day)
+            if(crewAttInfos.find { it.dateTime.toLocalDate().equals(date) } != null){
+                continue
+            }
             if (date.dayOfMonth == 25) {
                 continue
             }

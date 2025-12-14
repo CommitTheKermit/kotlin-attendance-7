@@ -2,11 +2,14 @@ package attendance.controller
 
 import attendance.constants.ErrorMessages
 import attendance.model.AttInfo
+import attendance.model.AttStatus
 import attendance.model.Attendance
+import attendance.model.DangerCrew
 import attendance.view.InputView
 import attendance.view.OutputView
 import attendance.view.output.CheckCrewAttView
 import attendance.view.output.EditView
+import attendance.view.output.ExpelDangerView
 import camp.nextstep.edu.missionutils.DateTimes
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,7 +36,10 @@ class AttController {
                     checkCrewAtt()
                 }
 
-                "4" -> {}
+                "4" -> {
+                    checkDangerCrew()
+                }
+
                 "Q" -> {
                     break
                 }
@@ -116,12 +122,53 @@ class AttController {
 
         targetInfos = Attendance.fillEmptyDate(crewAttInfos = targetInfos)
 
-        targetInfos = targetInfos.sortedBy { it.dateTime }.toMutableList()
+        val sortedList = targetInfos.sortedBy { it.dateTime }
         CheckCrewAttView.showCrewAtt(
             name = nickName,
-            attInfoList = targetInfos
+            attInfoList = sortedList
         )
 
 
     }
+
+    fun checkDangerCrew() {
+        val nickNameSet = mutableSetOf<String>()
+        Attendance.attendanceStatuses.forEach {
+            nickNameSet.add(it.nickName)
+        }
+
+
+        val dangerCrews = mutableListOf<DangerCrew>()
+        nickNameSet.forEach { nickName ->
+            var targetInfos =
+                Attendance.attendanceStatuses.filter { it.nickName == nickName }.toMutableList()
+            targetInfos = Attendance.fillEmptyDate(crewAttInfos = targetInfos)
+
+            val lateCount = targetInfos.filter { it.status == AttStatus.LATE }.size
+            val absentCount = targetInfos.filter { it.status == AttStatus.ABSENCE }.size + lateCount / 3
+
+            var actionStatus: String = ""
+            if (absentCount > 5) {
+                actionStatus = "제적"
+            } else if (absentCount >= 3) {
+                actionStatus = "면담"
+            } else if (absentCount >= 2) {
+                actionStatus = "경고"
+            }
+            dangerCrews.add(
+                DangerCrew(
+                    nickName = nickName,
+                    absentCount = absentCount,
+                    lateCount = lateCount,
+                    actionStatus = actionStatus
+                )
+            )
+        }
+
+        val sortedList = dangerCrews.sortedWith(
+            compareBy({ it.lateCount + it.absentCount * 3 }, { it.nickName })
+        ).reversed()
+        ExpelDangerView.showExpelDanger(sortedList)
+    }
+
 }
