@@ -15,7 +15,7 @@ class ApplicationTest : NsTest() {
                 val exception = assertThrows<IllegalArgumentException> { run("1", "짱수", "33:71") }
                 assertThat(exception.message).contains("[ERROR] 잘못된 형식을 입력하였습니다.")
             },
-            LocalDate.of(2024, 12, 13).atStartOfDay()
+            LocalDate.of(2025, 12, 13).atStartOfDay()
         )
     }
 
@@ -26,7 +26,7 @@ class ApplicationTest : NsTest() {
                 val exception = assertThrows<IllegalArgumentException> { run("1", "빈봉") }
                 assertThat(exception.message).contains("[ERROR] 등록되지 않은 닉네임입니다.")
             },
-            LocalDate.of(2024, 12, 13).atStartOfDay()
+            LocalDate.of(2025, 12, 13).atStartOfDay()
         )
     }
 
@@ -37,7 +37,7 @@ class ApplicationTest : NsTest() {
                 val exception = assertThrows<IllegalArgumentException> { run("1") }
                 assertThat(exception.message).contains("[ERROR] 12월 14일 토요일은 등교일이 아닙니다.")
             },
-            LocalDate.of(2024, 12, 14).atStartOfDay()
+            LocalDate.of(2025, 12, 14).atStartOfDay()
         )
     }
 
@@ -48,7 +48,7 @@ class ApplicationTest : NsTest() {
                 runException("1", "짱수", "08:00")
                 assertThat(output()).contains("12월 13일 금요일 08:00 (출석)")
             },
-            LocalDate.of(2024, 12, 13).atStartOfDay()
+            LocalDate.of(2025, 12, 13).atStartOfDay()
         )
     }
 
@@ -74,7 +74,20 @@ class ApplicationTest : NsTest() {
                     "경고 대상자",
                 )
             },
-            LocalDate.of(2024, 12, 13).atStartOfDay()
+            LocalDate.of(2025, 12, 13).atStartOfDay()
+        )
+    }
+
+    @Test
+    fun `출석 수정 테스트`() {
+        assertNowTest(
+            {
+                runException("2", "짱수", "12", "10:31", "Q")
+                assertThat(output()).contains(
+                    "12월 12일 금요일 10:00 (출석) -> 10:31 (결석) 수정 완료!",
+                )
+            },
+            LocalDate.of(2025, 12, 13).atStartOfDay()
         )
     }
 
