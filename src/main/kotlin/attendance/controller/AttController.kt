@@ -14,13 +14,13 @@ class AttController {
     fun run() {
         val statuses = Attendance.attendanceStatuses
 
-        OutputView.showRunGuide()
         while (true) {
             OutputView.showRunGuide()
             val runSelect = InputView.readLine()
 
             when (runSelect) {
                 "1" -> {
+                    attCheckIn()
                 }
 
                 "2" -> {}
@@ -33,5 +33,29 @@ class AttController {
 
             }
         }
+    }
+
+    fun attCheckIn() {
+        OutputView.showNickNameInputGuide()
+        val nickName = InputView.readLine()
+        OutputView.showTimeInputGuide()
+        val time = InputView.readLine()
+
+        val nowDate = DateTimes.now().toLocalDate()
+        val localTime: LocalTime = LocalTime.parse(time)
+        val dateTime: LocalDateTime = LocalDateTime.of(nowDate, localTime)
+
+        val newAttend = AttInfo(
+            nickName = nickName,
+            dateTime = dateTime
+        )
+        Attendance.attendanceStatuses.add(
+            newAttend
+        )
+
+        OutputView.showSingleStatus(
+            attInfo = newAttend,
+            attStatus = AttStatus.ATTEND
+        )
     }
 }

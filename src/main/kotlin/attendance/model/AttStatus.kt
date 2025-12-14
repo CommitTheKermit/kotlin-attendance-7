@@ -1,7 +1,5 @@
 package attendance.model
 
-import attendance.constants.ErrorMessages
-
 enum class AttStatus(val status: String) {
     LATE("지각"),
     ABSENCE("결석"),

@@ -1,7 +1,8 @@
 package attendance.view
 
+import attendance.model.AttInfo
+import attendance.model.AttStatus
 import camp.nextstep.edu.missionutils.DateTimes
-import lotto.constants.Messages
 import java.time.format.DateTimeFormatter
 
 object OutputView {
@@ -19,7 +20,18 @@ object OutputView {
             Q. 종료
         """.trimIndent()
         )
+    }
 
+    fun showNickNameInputGuide() {
+        println("닉네임을 입력해 주세요.")
+    }
 
+    fun showTimeInputGuide() {
+        println("등교 시간을 입력해 주세요.")
+    }
+
+    fun showSingleStatus(attInfo: AttInfo, attStatus: AttStatus) {
+        val formatter = DateTimeFormatter.ofPattern("MM월 dd일 EEEE HH:mm")
+        println("${attInfo.dateTime.format(formatter)} (${attStatus.status})")
     }
 }
