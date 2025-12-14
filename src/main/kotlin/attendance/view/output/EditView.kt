@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter
 
 object EditView {
     fun showNickNameInputGuide() {
-        println("닉출석을 수정하려는 크루의 닉네임을 입력해 주세요.")
+        println("출석을 수정하려는 크루의 닉네임을 입력해 주세요.")
     }
 
     fun showDateInputGuide() {
