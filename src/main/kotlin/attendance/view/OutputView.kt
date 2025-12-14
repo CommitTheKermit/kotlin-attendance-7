@@ -30,8 +30,8 @@ object OutputView {
         println("등교 시간을 입력해 주세요.")
     }
 
-    fun showSingleStatus(attInfo: AttInfo, attStatus: AttStatus) {
+    fun showSingleStatus(attInfo: AttInfo) {
         val formatter = DateTimeFormatter.ofPattern("MM월 dd일 EEEE HH:mm")
-        println("${attInfo.dateTime.format(formatter)} (${attStatus.status})")
+        println("${attInfo.dateTime.format(formatter)} (${attInfo.status.status})")
     }
 }

@@ -20,15 +20,13 @@ object EditView {
 
     fun showEditedStatus(
         prevAttInfo: AttInfo,
-        prevAttStatus: AttStatus,
         newAttInfo: AttInfo,
-        newAttStatus: AttStatus
     ) {
         val formatter = DateTimeFormatter.ofPattern("MM월 dd일 EEEE HH:mm")
         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         println(
-            "${prevAttInfo.dateTime.format(formatter)} (${prevAttStatus.status})" +
-                    " -> ${newAttInfo.dateTime.format(timeFormatter)} (${newAttStatus.status}) 수정 완료!"
+            "${prevAttInfo.dateTime.format(formatter)} (${prevAttInfo.status.status})" +
+                    " -> ${newAttInfo.dateTime.format(timeFormatter)} (${newAttInfo.status.status}) 수정 완료!"
         )
     }
 

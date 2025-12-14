@@ -27,7 +27,8 @@ object Attendance {
             val dateTime = LocalDateTime.parse(split[1], formatter)
             val status = AttInfo(
                 nickName = split[0],
-                dateTime = dateTime
+                dateTime = dateTime,
+                status = statusJudge(dateTime)
             )
             processStatuses.add(status)
         }
@@ -35,13 +36,13 @@ object Attendance {
         return processStatuses
     }
 
-    fun statusJudge(attInfo: AttInfo): AttStatus {
-        val attendStart: LocalTime = when (attInfo.dateTime.dayOfWeek) {
+    fun statusJudge(dateTime: LocalDateTime): AttStatus {
+        val attendStart: LocalTime = when (dateTime.dayOfWeek) {
             DayOfWeek.MONDAY -> LocalTime.parse("13:00")
             else -> LocalTime.parse("10:00")
         }
 
-        val attTime = attInfo.dateTime.toLocalTime()
+        val attTime = dateTime.toLocalTime()
         if (attTime.isAfter(attendStart)) {
             val minuteDiff = ChronoUnit.MINUTES.between(attendStart, attTime)
             if (minuteDiff > 30) {
