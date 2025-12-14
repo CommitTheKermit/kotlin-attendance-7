@@ -2,17 +2,22 @@ package attendance.view.output
 
 import attendance.model.AttInfo
 import attendance.model.AttStatus
-import attendance.model.Attendance
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 object CheckCrewAttView {
     fun showCrewAtt(name: String, attInfoList: List<AttInfo>) {
         println("이번 달 ${name}의 출석 기록입니다.")
         val formatter = DateTimeFormatter.ofPattern("MM월 dd일 EEEE HH:mm")
+        val absentFormatter = DateTimeFormatter.ofPattern("MM월 dd일 EEEE --:--")
 
-
-        attInfoList.forEach {
+        for (it in attInfoList) {
+            if (it.dateTime.toLocalTime().compareTo(LocalTime.parse("00:00")) == 0) {
+                println("${it.dateTime.format(absentFormatter)} (${it.status.status})")
+                continue
+            }
             println("${it.dateTime.format(formatter)} (${it.status.status})")
+
         }
 
         val attendCount = attInfoList.filter { it.status == AttStatus.ATTEND }.size
