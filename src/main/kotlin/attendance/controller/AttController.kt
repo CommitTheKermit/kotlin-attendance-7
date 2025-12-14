@@ -6,7 +6,9 @@ import attendance.model.AttStatus
 import attendance.model.Attendance
 import attendance.view.InputView
 import attendance.view.OutputView
+import attendance.view.output.EditView
 import camp.nextstep.edu.missionutils.DateTimes
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -55,7 +57,10 @@ class AttController {
 
         OutputView.showSingleStatus(
             attInfo = newAttend,
-            attStatus = AttStatus.ATTEND
+            attStatus = Attendance.statusJudge(
+                attInfo = newAttend
+            )
         )
     }
+
 }
