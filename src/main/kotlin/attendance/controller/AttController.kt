@@ -2,7 +2,6 @@ package attendance.controller
 
 import attendance.constants.ErrorMessages
 import attendance.model.AttInfo
-import attendance.model.AttStatus
 import attendance.model.Attendance
 import attendance.view.InputView
 import attendance.view.OutputView
@@ -25,10 +24,15 @@ class AttController {
                     attCheckIn()
                 }
 
-                "2" -> {}
+                "2" -> {
+                    attEdit()
+                }
+
                 "3" -> {}
                 "4" -> {}
-                "Q" -> {}
+                "Q" -> {
+                    break
+                }
                 else -> {
                     throw IllegalArgumentException(ErrorMessages.ILLEGAL_ARGUMENT)
                 }
@@ -63,4 +67,40 @@ class AttController {
         )
     }
 
+    fun attEdit() {
+        EditView.showNickNameInputGuide()
+        val nickName = InputView.readLine()
+        EditView.showDateInputGuide()
+        val date = InputView.readLine()
+        EditView.showTimeInputGuide()
+        val time = InputView.readLine()
+
+        val nowDate = DateTimes.now().toLocalDate()
+        val localTime: LocalTime = LocalTime.parse(time)
+        val dateTime: LocalDateTime = LocalDateTime.of(nowDate, localTime)
+
+        val targetDate = LocalDate.of(nowDate.year, nowDate.month, date.toInt())
+
+        val targetInfo =
+            Attendance.attendanceStatuses.find {
+                it.nickName == nickName
+                        && it.dateTime.toLocalDate().isEqual(targetDate)
+            }
+
+
+        val newAttend = AttInfo(
+            nickName = nickName,
+            dateTime = dateTime
+        )
+        EditView.showEditedStatus(
+            prevAttInfo = targetInfo!!,
+            prevAttStatus = Attendance.statusJudge(targetInfo),
+            newAttInfo = newAttend,
+            newAttStatus = Attendance.statusJudge(newAttend)
+        )
+
+        Attendance.attendanceStatuses.remove(targetInfo)
+        Attendance.attendanceStatuses.add(newAttend)
+
+    }
 }
