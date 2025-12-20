@@ -34,4 +34,8 @@ object OutputView {
         val formatter = DateTimeFormatter.ofPattern("MM월 dd일 EEEE HH:mm")
         println("${attInfo.dateTime.format(formatter)} (${attInfo.status.status})")
     }
+
+    fun showError(errorMsg: String) {
+        println("[ERROR] $errorMsg")
+    }
 }

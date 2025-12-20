@@ -4,7 +4,9 @@ import attendance.constants.ErrorMessages
 import attendance.model.AttInfo
 import attendance.model.AttStatus
 import attendance.model.Attendance
+import attendance.model.CheckIn
 import attendance.model.DangerCrew
+import attendance.validator.Validator
 import attendance.view.InputView
 import attendance.view.OutputView
 import attendance.view.output.CheckCrewAttView
@@ -14,6 +16,7 @@ import camp.nextstep.edu.missionutils.DateTimes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class AttController {
     fun run() {
@@ -45,7 +48,7 @@ class AttController {
                 }
 
                 else -> {
-                    throw IllegalArgumentException(ErrorMessages.ILLEGAL_ARGUMENT)
+                    OutputView.showError(ErrorMessages.ILLEGAL_ARGUMENT)
                 }
 
             }
@@ -54,44 +57,31 @@ class AttController {
 
     fun attCheckIn() {
         OutputView.showNickNameInputGuide()
-        val nickName = InputView.readLine()
+        val nickName = InputView.readNickName()
         OutputView.showTimeInputGuide()
-        val time = InputView.readLine()
+        val time = InputView.readTime()
 
-        val nowDate = DateTimes.now().toLocalDate()
-        val localTime: LocalTime = LocalTime.parse(time)
-        val dateTime: LocalDateTime = LocalDateTime.of(nowDate, localTime)
-
-        val newAttend = AttInfo(
-            nickName = nickName,
-            dateTime = dateTime,
-            status = Attendance.statusJudge(
-                dateTime
-            )
+        val newAttend = CheckIn.checkIn(
+            time = time,
+            nickName = nickName
         )
-        Attendance.attendanceStatuses.add(
-            newAttend
-        )
-
         OutputView.showSingleStatus(
             attInfo = newAttend,
-
-            )
+        )
     }
 
     fun attEdit() {
         EditView.showNickNameInputGuide()
-        val nickName = InputView.readLine()
+        val nickName = InputView.readNickName()
         EditView.showDateInputGuide()
-        val date = InputView.readLine()
+        val date = InputView.readDate()
         EditView.showTimeInputGuide()
-        val time = InputView.readLine()
+        val time = InputView.readTime()
 
         val nowDate = DateTimes.now().toLocalDate()
+        val targetDate = LocalDate.of(nowDate.year, nowDate.month, date.toInt())
         val localTime: LocalTime = LocalTime.parse(time)
         val dateTime: LocalDateTime = LocalDateTime.of(nowDate, localTime)
-
-        val targetDate = LocalDate.of(nowDate.year, nowDate.month, date.toInt())
 
         val targetInfo =
             Attendance.attendanceStatuses.find {
@@ -99,23 +89,27 @@ class AttController {
                         && it.dateTime.toLocalDate().isEqual(targetDate)
             }
 
-
         val newAttend = AttInfo(
             nickName = nickName,
             dateTime = dateTime, status = Attendance.statusJudge(dateTime),
         )
+
+        Attendance.attendanceStatuses.remove(targetInfo)
+        Attendance.attendanceStatuses.add(newAttend)
+
         EditView.showEditedStatus(
             prevAttInfo = targetInfo!!,
             newAttInfo = newAttend,
         )
 
-        Attendance.attendanceStatuses.remove(targetInfo)
-        Attendance.attendanceStatuses.add(newAttend)
     }
 
     fun checkCrewAtt() {
         OutputView.showNickNameInputGuide()
         val nickName = InputView.readLine()
+        if (!Validator.isValidNickName(nickName = nickName)) {
+            OutputView.showError(ErrorMessages.INVALID_NICKNAME)
+        }
 
         var targetInfos =
             Attendance.attendanceStatuses.filter { it.nickName == nickName }.toMutableList()
