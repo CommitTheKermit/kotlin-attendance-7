@@ -42,6 +42,11 @@ class AttendanceService(val attendanceList: MutableList<Attendance>) {
         val date: LocalDate = Parser.dateParse(InputView.readLine())
         Validator.dateValidate(date)
 
+        val target: Attendance? = attendanceList.find { attendance ->
+            attendance.dateTime.dayOfMonth == date.dayOfMonth && attendance.nickname == nickname
+        }
+        require(target != null) { ErrorMessages.ILLEGAL_ARGUMENT }
+
         AttendanceEditView.showTimeInputGuide()
         val time: LocalTime = Parser.timeParse(InputView.readLine())
         Validator.timeValidate(time)
