@@ -1,6 +1,8 @@
 package attendance.controller
 
 import attendance.model.Attendance
+import attendance.service.AttendanceService
+import attendance.service.FileService
 import attendance.service.Parser
 import attendance.service.Validator
 import attendance.view.AttendanceConfirmView
@@ -13,7 +15,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class AttendanceController {
-    val attendanceList: MutableList<Attendance> = fileRead()
+    val attendanceList: MutableList<Attendance> = FileService.fileRead()
+    val attendanceService = AttendanceService(attendanceList)
     fun run() {
         while (true) {
 
@@ -22,8 +25,8 @@ class AttendanceController {
             Validator.functionNumberValidate(functionNumber);
             OutputView.showNewLine()
             when (functionNumber) {
-                "1" -> attendanceConfirm()
-                "2" -> {}
+                "1" -> attendanceService.attendanceConfirm()
+                "2" -> attendanceService.attendanceEdit()
                 "3" -> {}
                 "4" -> {}
                 "Q" -> {}
@@ -33,46 +36,5 @@ class AttendanceController {
 
     }
 
-    fun fileRead(): MutableList<Attendance> {
 
-        val attendanceList = mutableListOf<Attendance>()
-
-        val file = File("src/main/resources/attendances.csv")
-        val lines = file.readLines().drop(1)
-
-        lines.forEach { line ->
-            val split: List<String> = line.split(",")
-            val dateTimeSplit = split[1].split(" ")
-
-            val date = LocalDate.parse(dateTimeSplit[0])
-            val time = LocalTime.parse(dateTimeSplit[1])
-            val dateTime = LocalDateTime.of(date, time)
-
-            val attendance = Attendance(
-                nickname = split[0],
-                dateTime = dateTime
-            )
-            attendanceList.add(attendance)
-        }
-        return attendanceList
-    }
-
-    fun attendanceConfirm() {
-        AttendanceConfirmView.showNicknameInputGuide()
-        val nickname = InputView.readLine()
-        Validator.nicknameValidate(nickname, attendanceList)
-
-        AttendanceConfirmView.showTimeInputGuide()
-        val time: LocalTime = Parser.timeParse(InputView.readLine())
-
-        val now = DateTimes.now()
-        val attendance = Attendance(
-            nickname, LocalDateTime.of(now.toLocalDate(), time)
-        )
-        attendanceList.add(
-            attendance
-        )
-
-        AttendanceConfirmView.showAttendance(attendance)
-    }
 }

@@ -1,6 +1,10 @@
 package attendance.service
 
 import attendance.constants.ErrorMessages
+import camp.nextstep.edu.missionutils.DateTimes
+import java.time.DateTimeException
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeParseException
 
@@ -18,5 +22,19 @@ object Parser {
         }
 
         return time
+    }
+
+    fun dateParse(input: String): LocalDate {
+        val date: LocalDate
+        val now = LocalDateTime.of(2024, 12, 2, 10, 0)
+        try {
+            date = LocalDate.of(now.year, now.month, input.toInt())
+        } catch (e: DateTimeException) {
+            throw IllegalArgumentException(ErrorMessages.ILLEGAL_ARGUMENT)
+        } catch (e: NumberFormatException) {
+            throw IllegalArgumentException(ErrorMessages.ILLEGAL_ARGUMENT)
+        }
+
+        return date
     }
 }
