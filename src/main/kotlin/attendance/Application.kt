@@ -1,5 +1,7 @@
 package attendance
 
+import attendance.controller.AttendanceController
+
 fun main() {
-    // TODO: 프로그램 구현
+    AttendanceController().run()
 }
