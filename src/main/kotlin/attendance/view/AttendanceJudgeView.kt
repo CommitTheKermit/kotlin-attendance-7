@@ -11,13 +11,19 @@ object AttendanceJudgeView {
 
     fun showAttendance(attendances: List<Attendance>) {
         val formatter = DateTimeFormatter.ofPattern("MM월 dd일 EEEE HH:mm")
+        val absentFormatter = DateTimeFormatter.ofPattern("MM월 dd일 EEEE --:--")
 
         var attendCount = 0
         var lateCount = 0
         var absentCount = 0
 
         attendances.forEach {
-            println("${it.dateTime.format(formatter)} (${it.status})")
+            if (it.status == AttStatus.ABSENT) {
+                println("${it.dateTime.format(absentFormatter)} (${it.status.status})")
+            }
+            else{
+                println("${it.dateTime.format(formatter)} (${it.status.status})")
+            }
 
             when (it.status) {
                 AttStatus.ATTEND -> attendCount++

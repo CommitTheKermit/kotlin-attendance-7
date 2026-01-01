@@ -7,6 +7,7 @@ import attendance.view.AttendanceEditView
 import attendance.view.AttendanceJudgeView
 import attendance.view.InputView
 import camp.nextstep.edu.missionutils.DateTimes
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -23,7 +24,7 @@ class AttendanceService(val attendanceList: MutableList<Attendance>) {
 
 //        val now = DateTimes.now()
         // 디버깅용 임시 코드 (2024년 12월 2일 월요일 기준)
-        val now = LocalDateTime.of(2024, 12, 2, 10, 0)
+        val now = LocalDateTime.of(2024, 12, 31, 10, 0)
         val attendance = Attendance(
             nickname, LocalDateTime.of(now.toLocalDate(), time)
         )
@@ -73,9 +74,39 @@ class AttendanceService(val attendanceList: MutableList<Attendance>) {
         val nickname = InputView.readLine()
         Validator.nicknameValidate(nickname, attendanceList)
 
-        attendanceList.filter { it.nickname == nickname }
+        var filteredList = attendanceList.filter { it.nickname == nickname }.toMutableList()
 
-        AttendanceJudgeView.showAttendance(attendanceList)
+        filteredList = fillAbsentAtt(nickname, filteredList)
 
+        AttendanceJudgeView.showAttendance(filteredList.sortedBy { it.dateTime })
+
+    }
+
+    fun fillAbsentAtt(nickname: String, filteredList: MutableList<Attendance>): MutableList<Attendance> {
+        val now = LocalDateTime.of(2024, 12, 31, 10, 0)
+        val startDay = 1;
+        val endDay = now.dayOfMonth
+        for (i in startDay..endDay) {
+            val date = LocalDate.of(
+                now.year, now.month.value, i
+            )
+            if (date.dayOfWeek == DayOfWeek.SATURDAY || date.dayOfWeek == DayOfWeek.SUNDAY || date.dayOfMonth == 25) {
+                continue
+            }
+            val target = filteredList.find { att ->
+                att.dateTime.toLocalDate().compareTo(
+                    date
+                ) == 0
+            }
+            if (target == null) {
+                filteredList.add(
+                    Attendance(
+                        nickname = nickname,
+                        dateTime = LocalDateTime.of(date, LocalTime.of(23, 59))
+                    )
+                )
+            }
+        }
+        return filteredList
     }
 }

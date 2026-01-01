@@ -8,7 +8,6 @@ import java.time.LocalTime
 
 object FileService {
     fun fileRead(): MutableList<Attendance> {
-
         val attendanceList = mutableListOf<Attendance>()
 
         val file = File("src/main/resources/attendances.csv")
@@ -29,6 +28,7 @@ object FileService {
             )
             attendanceList.add(attendance)
         }
-        return attendanceList
+        return attendanceList.sortedBy { it.dateTime }.toMutableList()
     }
+
 }

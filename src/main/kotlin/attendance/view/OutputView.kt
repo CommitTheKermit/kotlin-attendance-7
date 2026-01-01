@@ -8,7 +8,7 @@ object OutputView {
     fun showFunctionGuide() {
 
 //        val now = DateTimes.now()
-        val now = LocalDateTime.of(2024, 12, 2, 10, 0)
+        val now = LocalDateTime.of(2024, 12, 31, 10, 0)
         println(
             """
                 오늘은 ${now.format(DateTimeFormatter.ofPattern("MM월 dd일 EEEE"))}입니다. 기능을 선택해 주세요.
