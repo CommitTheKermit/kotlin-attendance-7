@@ -27,7 +27,7 @@ class AttendanceController {
             when (functionNumber) {
                 "1" -> attendanceService.attendanceConfirm()
                 "2" -> attendanceService.attendanceEdit()
-                "3" -> {}
+                "3" -> attendanceService.attendanceJudge()
                 "4" -> {}
                 "Q" -> {}
 

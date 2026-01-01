@@ -4,6 +4,7 @@ import attendance.constants.ErrorMessages
 import attendance.model.Attendance
 import attendance.view.AttendanceConfirmView
 import attendance.view.AttendanceEditView
+import attendance.view.AttendanceJudgeView
 import attendance.view.InputView
 import camp.nextstep.edu.missionutils.DateTimes
 import java.time.LocalDate
@@ -65,5 +66,15 @@ class AttendanceService(val attendanceList: MutableList<Attendance>) {
         }
         attendanceList[index] = attendance
         print(attendanceList)
+    }
+
+    fun attendanceJudge(){
+        AttendanceJudgeView.showNicknameInputGuide()
+        val nickname = InputView.readLine()
+        Validator.nicknameValidate(nickname, attendanceList)
+
+
+
+
     }
 }
