@@ -68,13 +68,14 @@ class AttendanceService(val attendanceList: MutableList<Attendance>) {
         print(attendanceList)
     }
 
-    fun attendanceJudge(){
+    fun attendanceJudge() {
         AttendanceJudgeView.showNicknameInputGuide()
         val nickname = InputView.readLine()
         Validator.nicknameValidate(nickname, attendanceList)
 
+        attendanceList.filter { it.nickname == nickname }
 
-
+        AttendanceJudgeView.showAttendance(attendanceList)
 
     }
 }
