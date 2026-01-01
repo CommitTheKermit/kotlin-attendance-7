@@ -58,5 +58,12 @@ class AttendanceController {
         val nickname = InputView.readLine()
         Validator.nicknameValidate(nickname, attendanceList)
 
+        val time: LocalTime = Parser.timeParse(InputView.readLine())
+        val now = DateTimes.now()
+        attendanceList.add(
+            Attendance(
+                nickname, LocalDateTime.of(now.toLocalDate(), time)
+            )
+        )
     }
 }
