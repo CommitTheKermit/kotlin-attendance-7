@@ -1,7 +1,6 @@
 package attendance.view
 
-import attendance.constants.AttStatus
-import java.time.LocalDateTime
+import attendance.model.Attendance
 import java.time.format.DateTimeFormatter
 
 object AttendanceConfirmView {
@@ -13,8 +12,9 @@ object AttendanceConfirmView {
         println("등교 시간을 입력해 주세요.")
     }
 
-    fun showAttendance(dateTime: LocalDateTime, status: AttStatus) {
-        val formatter = DateTimeFormatter.ofPattern("MM월 dd일 EEE HH:mm");
-        println("${formatter.format(dateTime)} (${status.name})")
+    fun showAttendance(attendance: Attendance) {
+        val formatter = DateTimeFormatter.ofPattern("MM월 dd일 EEEE HH:mm");
+        println("${formatter.format(attendance.dateTime)} (${attendance.status.status})")
+        println()
     }
 }

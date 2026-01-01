@@ -6,7 +6,7 @@ import attendance.model.Attendance
 object Validator {
 
     fun functionNumberValidate(input: String) {
-        require((input.toInt() in 1..<5) && input == "Q") { ErrorMessages.ILLEGAL_ARGUMENT }
+        require((input.toInt() in 1..<6) || input == "Q") { ErrorMessages.ILLEGAL_ARGUMENT }
     }
 
     fun nicknameValidate(input: String, attList: List<Attendance>) {

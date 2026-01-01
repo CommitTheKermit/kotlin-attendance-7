@@ -57,17 +57,22 @@ class AttendanceController {
         return attendanceList
     }
 
-    fun attendanceConfirm(){
+    fun attendanceConfirm() {
         AttendanceConfirmView.showNicknameInputGuide()
         val nickname = InputView.readLine()
         Validator.nicknameValidate(nickname, attendanceList)
 
+        AttendanceConfirmView.showTimeInputGuide()
         val time: LocalTime = Parser.timeParse(InputView.readLine())
+
         val now = DateTimes.now()
-        attendanceList.add(
-            Attendance(
-                nickname, LocalDateTime.of(now.toLocalDate(), time)
-            )
+        val attendance = Attendance(
+            nickname, LocalDateTime.of(now.toLocalDate(), time)
         )
+        attendanceList.add(
+            attendance
+        )
+
+        AttendanceConfirmView.showAttendance(attendance)
     }
 }
