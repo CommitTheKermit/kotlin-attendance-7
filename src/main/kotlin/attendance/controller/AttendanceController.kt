@@ -28,7 +28,7 @@ class AttendanceController {
                 "1" -> attendanceService.attendanceConfirm()
                 "2" -> attendanceService.attendanceEdit()
                 "3" -> attendanceService.attendanceJudge()
-                "4" -> {}
+                "4" -> attendanceService.attDangerCheck()
                 "Q" -> {}
 
             }

@@ -2,6 +2,8 @@ package attendance.service
 
 import attendance.constants.ErrorMessages
 import attendance.model.Attendance
+import attendance.model.AttendanceStat
+import attendance.view.AttDangerView
 import attendance.view.AttendanceConfirmView
 import attendance.view.AttendanceEditView
 import attendance.view.AttendanceJudgeView
@@ -83,7 +85,7 @@ class AttendanceService(val attendanceList: MutableList<Attendance>) {
     }
 
     fun fillAbsentAtt(nickname: String, filteredList: MutableList<Attendance>): MutableList<Attendance> {
-        val now = LocalDateTime.of(2024, 12, 31, 10, 0)
+        val now = LocalDateTime.of(2024, 12, 12, 10, 0)
         val startDay = 1;
         val endDay = now.dayOfMonth
         for (i in startDay..endDay) {
@@ -108,5 +110,26 @@ class AttendanceService(val attendanceList: MutableList<Attendance>) {
             }
         }
         return filteredList
+    }
+
+    fun attDangerCheck() {
+        val nicknames = attendanceList.distinctBy { it.nickname }.map { it.nickname }
+        val stats = mutableListOf<AttendanceStat>()
+        for (nickname in nicknames) {
+            var targetList = attendanceList.filter { att -> att.nickname == nickname }.toMutableList()
+            targetList = fillAbsentAtt(targetList.first().nickname, targetList)
+            val stat = AttendanceStat(targetList)
+            if (stat.warning.isEmpty()){
+                continue
+            }
+
+            stats.add(stat)
+        }
+
+        AttDangerView.showDangerList(
+            stats = stats.sortedBy {
+                it.absentCount + it.lateCount / 3
+            }.reversed()
+        );
     }
 }
